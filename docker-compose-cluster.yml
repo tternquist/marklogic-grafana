@@ -5,7 +5,8 @@ services:
   bootstrap:
     image: store/marklogicdb/marklogic-server:10.0-7-dev-centos
     container_name: bootstrap
-    domainname: .
+    hostname: ml-node-a.local
+    #domainname: local
     environment:
       - MARKLOGIC_INIT=true
       - MARKLOGIC_ADMIN_USERNAME=admin
@@ -20,9 +21,25 @@ services:
       - type: volume
         target: /var/opt/MarkLogic
 
-  dnode:
+  dnode1:
     image: store/marklogicdb/marklogic-server:10.0-7-dev-centos
-    domainname: .
+    #domainname: local
+    hostname: ml-node-b.local
+    environment:
+      - MARKLOGIC_INIT=true
+      - MARKLOGIC_ADMIN_USERNAME=admin
+      - MARKLOGIC_ADMIN_PASSWORD=admin
+      - MARKLOGIC_JOIN_CLUSTER=true
+      - TZ=America/New_York
+    depends_on:
+      - bootstrap
+    networks:
+      - internal_net
+
+  dnode2:
+    image: store/marklogicdb/marklogic-server:10.0-7-dev-centos
+    #domainname: local
+    hostname: ml-node-c.local
     environment:
       - MARKLOGIC_INIT=true
       - MARKLOGIC_ADMIN_USERNAME=admin
