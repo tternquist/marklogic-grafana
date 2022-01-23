@@ -1,9 +1,9 @@
 version: '3.6'
 services:
   bootstrap:
-    image: store/marklogicdb/marklogic-server:10.0-7-dev-centos
+    image: "${IMAGE}"
     container_name: ml
-    domainname: .
+    hostname: ml-node-a.local
     environment:
       - MARKLOGIC_INIT=true
       - MARKLOGIC_ADMIN_USERNAME=admin
