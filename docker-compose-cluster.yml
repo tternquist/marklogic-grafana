@@ -3,7 +3,7 @@ version: '3.6'
 # docker system prune --volumes
 services:
   bootstrap:
-    image: store/marklogicdb/marklogic-server:10.0-7-dev-centos
+    image: "${IMAGE}"
     container_name: bootstrap
     hostname: ml-node-a.local
     #domainname: local
@@ -22,7 +22,7 @@ services:
         target: /var/opt/MarkLogic
 
   dnode1:
-    image: store/marklogicdb/marklogic-server:10.0-7-dev-centos
+    image: "${IMAGE}"
     #domainname: local
     hostname: ml-node-b.local
     environment:
@@ -37,7 +37,7 @@ services:
       - internal_net
 
   dnode2:
-    image: store/marklogicdb/marklogic-server:10.0-7-dev-centos
+    image: "${IMAGE}"
     #domainname: local
     hostname: ml-node-c.local
     environment:
