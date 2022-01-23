@@ -1,12 +1,9 @@
 version: '3.6'
-# docker-compose -f docker-compose-cluster.yml up -d --scale dnode=2
-# docker system prune --volumes
 services:
   bootstrap:
     image: "${IMAGE}"
     container_name: bootstrap
     hostname: ml-node-a.local
-    #domainname: local
     environment:
       - MARKLOGIC_INIT=true
       - MARKLOGIC_ADMIN_USERNAME=admin
@@ -23,7 +20,6 @@ services:
 
   dnode1:
     image: "${IMAGE}"
-    #domainname: local
     hostname: ml-node-b.local
     environment:
       - MARKLOGIC_INIT=true
@@ -38,7 +34,6 @@ services:
 
   dnode2:
     image: "${IMAGE}"
-    #domainname: local
     hostname: ml-node-c.local
     environment:
       - MARKLOGIC_INIT=true
