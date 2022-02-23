@@ -4,6 +4,7 @@ services:
     image: "${IMAGE}"
     container_name: ml
     hostname: ml-node-a.local
+    restart: always
     environment:
       - MARKLOGIC_INIT=true
       - MARKLOGIC_ADMIN_USERNAME=admin

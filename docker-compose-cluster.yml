@@ -4,6 +4,7 @@ services:
     image: "${IMAGE}"
     container_name: bootstrap
     hostname: ml-node-a.local
+    restart: always
     environment:
       - MARKLOGIC_INIT=true
       - MARKLOGIC_ADMIN_USERNAME=admin
@@ -21,6 +22,7 @@ services:
   dnode1:
     image: "${IMAGE}"
     hostname: ml-node-b.local
+    restart: always
     environment:
       - MARKLOGIC_INIT=true
       - MARKLOGIC_ADMIN_USERNAME=admin
@@ -35,6 +37,7 @@ services:
   dnode2:
     image: "${IMAGE}"
     hostname: ml-node-c.local
+    restart: always
     environment:
       - MARKLOGIC_INIT=true
       - MARKLOGIC_ADMIN_USERNAME=admin
