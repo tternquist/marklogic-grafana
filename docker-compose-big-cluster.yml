@@ -49,6 +49,51 @@ services:
     networks:
       - internal_net
 
+  dnode3:
+    image: "${IMAGE_CLUSTER}"
+    hostname: ml-node-d.local
+    restart: always
+    environment:
+      - MARKLOGIC_INIT=true
+      - MARKLOGIC_ADMIN_USERNAME=admin
+      - MARKLOGIC_ADMIN_PASSWORD=admin
+      - MARKLOGIC_JOIN_CLUSTER=true
+      - TZ=America/New_York
+    depends_on:
+      - bootstrap
+    networks:
+      - internal_net
+
+  dnode4:
+    image: "${IMAGE_CLUSTER}"
+    hostname: ml-node-e.local
+    restart: always
+    environment:
+      - MARKLOGIC_INIT=true
+      - MARKLOGIC_ADMIN_USERNAME=admin
+      - MARKLOGIC_ADMIN_PASSWORD=admin
+      - MARKLOGIC_JOIN_CLUSTER=true
+      - TZ=America/New_York
+    depends_on:
+      - bootstrap
+    networks:
+      - internal_net
+
+  dnode5:
+    image: "${IMAGE_CLUSTER}"
+    hostname: ml-node-f.local
+    restart: always
+    environment:
+      - MARKLOGIC_INIT=true
+      - MARKLOGIC_ADMIN_USERNAME=admin
+      - MARKLOGIC_ADMIN_PASSWORD=admin
+      - MARKLOGIC_JOIN_CLUSTER=true
+      - TZ=America/New_York
+    depends_on:
+      - bootstrap
+    networks:
+      - internal_net
+
 networks:
   external_net: {}
   internal_net:
