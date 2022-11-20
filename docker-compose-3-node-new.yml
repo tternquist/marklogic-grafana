@@ -1,0 +1,93 @@
+#Docker compose file sample to setup a three node cluster
+version: '3.6'
+services:
+  bootstrap_3n:
+    image: "${IMAGE}"
+    container_name: bootstrap_3n
+    hostname: bootstrap_3n.local
+    restart: always
+    environment:
+      - MARKLOGIC_INIT=true
+      - MARKLOGIC_ADMIN_USERNAME_FILE=mldb_admin_username
+      - MARKLOGIC_ADMIN_PASSWORD_FILE=mldb_admin_password
+      - MARKLOGIC_WALLET_PASSWORD_FILE=mldb_wallet_password
+    volumes:
+      - MarkLogic_3n_vol1:/var/opt/MarkLogic
+    secrets:
+      - mldb_admin_password
+      - mldb_admin_username
+      - mldb_wallet_password
+    ports:
+      - 8000-8015:8000-8015
+
+    networks:
+      - external_net
+      - internal_net
+  node2:
+    image: "${IMAGE}"
+    container_name: node2
+    hostname: node2.local
+    restart: always
+    environment:
+      - MARKLOGIC_INIT=true
+      - MARKLOGIC_ADMIN_USERNAME_FILE=mldb_admin_username
+      - MARKLOGIC_ADMIN_PASSWORD_FILE=mldb_admin_password
+      - MARKLOGIC_WALLET_PASSWORD_FILE=mldb_wallet_password
+      - MARKLOGIC_JOIN_CLUSTER=true
+      - MARKLOGIC_BOOTSTRAP_HOST=bootstrap_3n.local
+    volumes:
+      - MarkLogic_3n_vol2:/var/opt/MarkLogic
+    secrets:
+      - mldb_admin_password
+      - mldb_admin_username
+      - mldb_wallet_password
+    ports:
+      - 8000-8015:8000-8015
+
+    depends_on:
+      - bootstrap_3n
+    networks:
+      - internal_net
+  node3:
+    image: "${IMAGE}"
+    container_name: node3
+    hostname: node3.local
+    restart: always
+    environment:
+      - MARKLOGIC_INIT=true
+      - MARKLOGIC_ADMIN_USERNAME_FILE=mldb_admin_username
+      - MARKLOGIC_ADMIN_PASSWORD_FILE=mldb_admin_password
+      - MARKLOGIC_WALLET_PASSWORD_FILE=mldb_wallet_password
+      - MARKLOGIC_JOIN_CLUSTER=true
+      - MARKLOGIC_BOOTSTRAP_HOST=bootstrap_3n.local
+    volumes:
+      - MarkLogic_3n_vol3:/var/opt/MarkLogic
+    secrets:
+      - mldb_admin_password
+      - mldb_admin_username
+      - mldb_wallet_password
+    ports:
+      - 8000-8015:8000-8015
+
+    depends_on:
+      - bootstrap_3n
+    networks:
+      - internal_net
+secrets:
+  mldb_admin_password:
+    file: ./mldb_admin_password.txt
+  mldb_admin_username:
+    file: ./mldb_admin_username.txt
+  mldb_wallet_password:
+    file: ./mldb_wallet_password.txt
+networks:
+  external_net: {}
+  internal_net:
+    internal: true
+    driver_opts:
+      com.docker.network.bridge.enable_icc: "true"
+
+volumes:
+  MarkLogic_3n_vol1:
+  MarkLogic_3n_vol2:
+  MarkLogic_3n_vol3:

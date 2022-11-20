@@ -44,6 +44,7 @@ services:
       - MARKLOGIC_ADMIN_PASSWORD=admin
       - MARKLOGIC_JOIN_CLUSTER=true
       - TZ=America/New_York
+      - MARKLOGIC_GROUP
     depends_on:
       - bootstrap
     networks:

@@ -28,6 +28,7 @@ services:
       - MARKLOGIC_ADMIN_USERNAME=admin
       - MARKLOGIC_ADMIN_PASSWORD=admin
       - MARKLOGIC_JOIN_CLUSTER=true
+      - MARKLOGIC_BOOTSTRAP_HOST=ml-node-a.local
       - TZ=America/New_York
     depends_on:
       - bootstrap
@@ -43,6 +44,7 @@ services:
       - MARKLOGIC_ADMIN_USERNAME=admin
       - MARKLOGIC_ADMIN_PASSWORD=admin
       - MARKLOGIC_JOIN_CLUSTER=true
+      - MARKLOGIC_BOOTSTRAP_HOST=ml-node-a.local
       - TZ=America/New_York
     depends_on:
       - bootstrap
