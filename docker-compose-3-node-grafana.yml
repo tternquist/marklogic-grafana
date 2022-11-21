@@ -1,6 +1,51 @@
 #Docker compose file sample to setup a three node cluster
 version: '3.6'
+name: marklogic_local
+
 services:
+  #
+  # loki stack
+  # https://cylab.be/blog/241/use-loki-to-monitor-the-logs-of-your-docker-
+  # compose-application
+  #
+
+  loki:
+    image: grafana/loki:2.6.1
+    container_name: loki
+    ports:
+      - "3100"
+    volumes:
+      # directory must be created first, with uid:gid 10001:10001
+      - ./volumes/loki:/loki
+    networks:
+
+      - internal_net
+  promtail:
+    image: grafana/promtail:2.6.1
+    volumes:
+      # custom config will read logs from the containers of
+      # this project
+      - ./loki/promtail-config.yaml:/etc/promtail/config.yml
+      # to read container labels and logs
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/containers:/var/lib/docker/containers
+    networks:
+      - internal_net
+  # will be available at http://127.0.0.1:3000
+  # default credentials: admin/admin
+  grafana:
+    image: grafana/grafana:9.2.2
+    ports:
+      - "3000:3000"
+    volumes:
+      # directory must be created first, with uid:gid 472:472
+      - ./volumes/grafana:/var/lib/grafana
+      # automatically configure the loki datasource
+      - ./loki/grafana/provisioning/:/etc/grafana/provisioning/
+    networks:
+      - external_net
+      - internal_net
+
   bootstrap_3n:
     image: "${IMAGE}"
     container_name: bootstrap_3n
@@ -13,6 +58,8 @@ services:
       - MARKLOGIC_WALLET_PASSWORD_FILE=mldb_wallet_password
     volumes:
       - MarkLogic_3n_vol1:/var/opt/MarkLogic
+      - log-volume1:/var/opt/MarkLogic/Logs:rw
+
     secrets:
       - mldb_admin_password
       - mldb_admin_username
@@ -37,6 +84,8 @@ services:
       - MARKLOGIC_BOOTSTRAP_HOST=bootstrap_3n.local
     volumes:
       - MarkLogic_3n_vol2:/var/opt/MarkLogic
+      - log-volume2:/var/opt/MarkLogic/Logs:rw
+
     secrets:
       - mldb_admin_password
       - mldb_admin_username
@@ -62,6 +111,8 @@ services:
       - MARKLOGIC_BOOTSTRAP_HOST=bootstrap_3n.local
     volumes:
       - MarkLogic_3n_vol3:/var/opt/MarkLogic
+      - log-volume3:/var/opt/MarkLogic/Logs:rw
+
     secrets:
       - mldb_admin_password
       - mldb_admin_username
@@ -71,6 +122,25 @@ services:
 
     depends_on:
       - bootstrap_3n
+    networks:
+      - internal_net
+
+  logging:
+    container_name: logging
+    image: ${FLUENT_BIT_IMAGE}
+    ports:
+      - "2020:2020"
+    depends_on:
+      - bootstrap_3n
+      - loki
+    # environment:
+    #   - LOKI_URL=http://loki:3100/loki/api/v1/push
+    #   - LOG_PATH=/var/opt/MarkLogic/Logs/*Log.txt
+    volumes:
+      - log-volume1:/var/opt/MarkLogic/Logs/node1:ro
+      - log-volume2:/var/opt/MarkLogic/Logs/node2:ro
+      - log-volume3:/var/opt/MarkLogic/Logs/node3:ro
+      - ./docker_to_es.conf:/fluent-bit/etc/fluent-bit.conf
     networks:
       - internal_net
 secrets:
@@ -91,3 +161,6 @@ volumes:
   MarkLogic_3n_vol1:
   MarkLogic_3n_vol2:
   MarkLogic_3n_vol3:
+  log-volume1:
+  log-volume2:
+  log-volume3:
