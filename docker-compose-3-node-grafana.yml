@@ -141,6 +141,8 @@ services:
       - log-volume2:/var/opt/MarkLogic/Logs/node2:ro
       - log-volume3:/var/opt/MarkLogic/Logs/node3:ro
       - ./docker_to_es.conf:/fluent-bit/etc/fluent-bit.conf
+      - ./parsers.conf:/fluent-bit/etc/parsers.conf
+
     networks:
       - internal_net
 secrets:
