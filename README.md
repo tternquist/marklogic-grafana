@@ -8,7 +8,8 @@ Before running docker compose, run the following:
     mkdir -p ./volumes/grafana
     sudo chown 472:472 ./volumes/grafana
 
-Docker Compose Command: docker compose -f "docker-compose-3-node-grafana.yml" up -d --build 
+Docker Compose Command: 
+    `docker compose -f "docker-compose-3-node-grafana.yml" up -d --build `
 
 Based on guide - https://cylab.be/blog/241/use-loki-to-monitor-the-logs-of-your-docker-compose-application
 
