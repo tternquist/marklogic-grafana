@@ -11,6 +11,7 @@ services:
 
   loki:
     image: grafana/loki:2.6.1
+    restart: always
     container_name: loki
     ports:
       - "3100"
@@ -22,13 +23,14 @@ services:
       - internal_net
   promtail:
     image: grafana/promtail:2.6.1
+    restart: always
     volumes:
       # custom config will read logs from the containers of
       # this project
       - ./loki/promtail-config.yaml:/etc/promtail/config.yml
       # to read container labels and logs
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /var/lib/docker/containers:/var/lib/docker/containers
+      #- /var/run/docker.sock:/var/run/docker.sock
+      #- /var/lib/docker/containers:/var/lib/docker/containers
     networks:
       - internal_net
   # will be available at http://127.0.0.1:3000
@@ -37,6 +39,7 @@ services:
     image: grafana/grafana:9.2.2
     ports:
       - "3000:3000"
+    restart: always
     volumes:
       # directory must be created first, with uid:gid 472:472
       - ./volumes/grafana:/var/lib/grafana
@@ -130,9 +133,18 @@ services:
     image: ${FLUENT_BIT_IMAGE}
     ports:
       - "2020:2020"
+    restart: on-failure
+    volumes_from:
+      - bootstrap_3n
+      - node2
+      - node3
     depends_on:
       - bootstrap_3n
       - loki
+      - promtail
+      - grafana
+      - node2
+      - node3
     # environment:
     #   - LOKI_URL=http://loki:3100/loki/api/v1/push
     #   - LOG_PATH=/var/opt/MarkLogic/Logs/*Log.txt
